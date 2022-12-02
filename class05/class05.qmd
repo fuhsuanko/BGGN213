@@ -1,0 +1,137 @@
+---
+title: "Class 5: Data Viisualization with ggplot"
+author: "Fu-Hsuan Ko"
+format: pdf
+toc: true
+---
+
+# Our first plot
+
+R has base graphic
+
+```{r}
+#ggplot(cars)
+```
+
+How would I plot this with 'ggplot'?
+NO! We need to install package first
+We use "install_packeage()"
+
+```{r}
+# install.packages("ggplot2")
+```
+
+Before I can use this package I need to load it with a "library()" call
+
+```{r}
+library(ggplot2)
+```
+
+Every ggplot needs at least three layers"
+
+- **Data** (i.e. the data.frame we have)
+- **Aes** (the aesthetic mapping of our data to what we want to plot)
+- **Geoms** (How we want to plot this stuff!)
+
+
+add a straight line without SE
+```{r}
+ggplot(data=cars)+
+  aes(x=speed, y=dist)+
+  geom_point()+
+  geom_smooth(se=FALSE, method="lm")
+```
+
+add lable and change background
+```{r}
+ggplot(cars) + 
+  aes(x=speed, y=dist) +
+  geom_point() +
+  labs(title="Speed and Stopping Distances of Cars",
+       x="Speed (MPH)", 
+       y="Stopping Distance (ft)",
+       subtitle = "Your informative subtitle text here",
+       caption="Dataset: 'cars'") +
+  geom_smooth(method="lm", se=FALSE) +
+  theme_bw()
+```
+
+```{r}
+url <- "https://bioboot.github.io/bimm143_S20/class-material/up_down_expression.txt"
+genes <- read.delim(url)
+head(genes)
+# Q. Use the nrow() function to find out how many genes are in this dataset. What is your answer? 
+nrow(genes)
+# Q. Use the colnames() function and the ncol() function on the genes data frame to find out what the column names are (we will need these later) and how many columns there are. How many columns did you find?
+colnames(genes)
+#Q. Use the table() function on the State column of this data.frame to find out how many ‘up’ regulated genes there are. What is your answer?
+ncol(genes)
+table(genes$State)
+# Using your values above and 2 significant figures. What fraction of total genes is up-regulated in this dataset?
+round(table(genes$State)/nrow(genes)*100,2)
+```
+
+There are 'r nrow(genes)' genes in this data set
+
+```{r}
+ggplot(genes) + 
+    aes(x=Condition1, y=Condition2) +
+    geom_point()
+```
+```{r}
+p <- ggplot(genes) + 
+    aes(x=Condition1, y=Condition2, col=State) +
+    geom_point()
+p
+p + scale_colour_manual( values=c("blue","gray","red") )
+
+#Q. Nice, now add some plot annotations to the p object with the labs() function so your plot looks like the following:
+p + scale_colour_manual( values=c("blue","gray","red") )+
+  labs(title="Gene Expresion Changes Upon Drug Treatment", x="Control (no drug)", y="Drug Treatment")
+```
+
+```{r}
+# File location online
+url <- "https://raw.githubusercontent.com/jennybc/gapminder/master/inst/extdata/gapminder.tsv"
+
+gapminder <- read.delim(url)
+```
+```{r}
+# install.packages("dplyr")  ## un-comment to install if needed
+library(dplyr)
+
+gapminder_2007 <- gapminder %>% 
+  filter(year==2007)
+ggplot(gapminder_2007) +
+  aes(x=gdpPercap, y=lifeExp) +
+  geom_point()
+```
+Q. Can you adapt the code you have learned thus far to reproduce our gapminder scatter plot for the year 1957? What do you notice about this plot is it easy to compare with the one for 2007?
+
+
+```{r}
+gapminder_1957 <- gapminder %>% 
+  filter(year==1957)
+ggplot(gapminder_1957) + 
+  aes(x = gdpPercap, y = lifeExp, color=continent,size = pop, alpha=0.7) +
+  geom_point() + 
+  scale_size_area(max_size = 10) 
+```
+
+
+Q. Do the same steps above but include 1957 and 2007 in your input dataset for ggplot(). You should now include the layer facet_wrap(~year) to produce the following plot:
+```{r}
+```
+
+
+```{r}
+gapminder_1957 <- gapminder %>% 
+  filter(year==1957|year==2007)
+ggplot(gapminder_1957) + 
+  aes(x = gdpPercap, y = lifeExp, color=continent,size = pop, alpha=0.7) +
+  geom_point() + 
+  scale_size_area(max_size = 10) +
+  facet_wrap(~year)
+```
+
+
